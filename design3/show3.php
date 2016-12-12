@@ -37,7 +37,6 @@
     // 男女カウント用の変数
     $male = 0;
     $female = 0;
-
     while (1) {
         // fetchする
         $record = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -55,14 +54,6 @@
             $female++;
         }
     }
-
-
-// $_GET['action']が存在する、かつ空で無いときdeleteが指定されていたら削除処理を行う。
-// 削除処理を行ったら、index.phpに画面遷移する。
-
-
-
-
 $dbh=null;
 
 
@@ -146,7 +137,7 @@ $dbh=null;
               <td>
                 <div class="text-center">
                   <a href="edit.php?friend_id=<?php echo $friend['friend_id']; ?>"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a href="javascript:void(0);" onclick="destroy(<?php echo $friend['friend_id']; ?>);"><i class="fa fa-trash"></i></a>
+                  <a href="javascript:void(0);" onclick="destroy();"><i class="fa fa-trash"></i></a>
                 </div>
               </td>
             </tr>
@@ -181,15 +172,5 @@ $dbh=null;
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script>
-      function destroy(friend_id){
-        if(confirm('削除します。よろしいですか。')==true){
-          location.href='show.php?action=delete&friend_id=' + friend_id;
-          return true;
-        }else{
-          return false;
-        }
-      }
-    </script>
   </body>
 </html>

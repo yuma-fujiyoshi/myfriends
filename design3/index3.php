@@ -7,24 +7,26 @@ $dbh=new PDO($dsn,$user,$password);
 $dbh->query('SET NAMES utf8');
 
 // SQL作成
-
+$sql='SELECT * FROM `areas`';
 
 // SQL実行
-$sql='SELECT * FROM `areas`';
 $stmt=$dbh->prepare($sql);
 $stmt->execute();
 
+// データ取得
+// データ格納用変数
 $areas=array();
-
 while(1){
   $rec=$stmt->fetch(PDO::FETCH_ASSOC);
+// 取得できなかったらループ終了
   if($rec==false){
     break;
   }
-  $areas[]=$rec;
+
+ $areas[]=$rec;
+ 
 }
-// データ取得
-// データ格納用変数
+
 
 $dbh=null;
 
@@ -105,8 +107,6 @@ $dbh=null;
               <td><div class="text-center">3</div></td>
             </tr>
             <?php endforeach ?>
-
-            
 
             
             <!-- <tr>

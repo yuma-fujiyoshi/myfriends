@@ -6,74 +6,49 @@ $password='';
 $dbh=new PDO($dsn,$user,$password);
 $dbh->query('SET NAMES utf8');
 
-// 名前表示
-$sql='SELECT `friend_name`,`area_id`,`friend_id` FROM `friends` WHERE `friend_id`=?';
+
+$sql = 'SELECT * FROM `areas`';
+$stmt=$dbh->prepare($sql);
+$stmt->execute();
+
+$areas=array();
+
+
+while(1){
+  $rec=$stmt->fetch(PDO::FETCH_ASSOC);
+  if($rec==false){
+    break;
+
+  }
+  $areas[]=$rec;
+}
+
+
+
+
+$friend_id=$_GET['friend_id'];
+
+$sql='SELECT * FROM `friends` WHERE `friend_id`='.$friend_id;
+$stmt=$dbh->prepare($sql);
+$stmt->execute();
+
+$friends=$stmt->fetch(PDO::FETCH_ASSOC);
+
+
+$data=array();
+$sql='SELECT `gender` FROM `friends` WHERE `friend_id`=?';
 $data[]=$_GET['friend_id'];
 $stmt=$dbh->prepare($sql);
 $stmt->execute($data);
 
 
+
 $rec=$stmt->fetch(PDO::FETCH_ASSOC);
 
 
-// 都道府県表示
-$sql='SELECT * FROM `areas`';
-$stmt=$dbh->prepare($sql);
-$stmt->execute();
 
 
-$areas=array();
-
-while(1){
-  $reco=$stmt->fetch(PDO::FETCH_ASSOC);
-  if($reco==false){
-    break;
-  }
-  $areas[]=$reco;
-}
-
-
-// 性別表示
-$sql='SELECT `gender`,`age` FROM `friends` WHERE `friend_id`=?';
-$data2[]=$_GET['friend_id'];
-$stmt=$dbh->prepare($sql);
-$stmt->execute($data2);
-
-$record=$stmt->fetch(PDO::FETCH_ASSOC);
-
-
-
-
-
-var_dump($_POST);
-// // // 更新処理
-if(isset($_POST) && !empty($_POST)){
-  $sql='UPDATE `friends` SET `friend_name`=?,`area_id`=?,`gender`=?,`age`=? WHERE `friend_id`=?';
-
-
-
-
-  $data3[]=$_GET['friend_id'];
-  $data3[]=$_GET['friend_name'];
-  $data3[]=$_GET['area_id'];
-  $data3[]=$_GET['gender'];
-  $data3[]=$_GET['age'];
-
-  $stmt=$dbh->prepare($sql);
-  $stmt->execute($data3);
-
-  // $editProfile=$stmt->fetch(PDO::ASSOC);
-
-
-
-
-  header('Location: index.php');  
-}
-
-  // SQL実行
-
-
- $dbh=null;
+$dbh=null;
 
 ?>
 
@@ -115,7 +90,7 @@ if(isset($_POST) && !empty($_POST)){
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="index.php"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
+              <a class="navbar-brand" href="index.html"><span class="strong-title"><i class="fa fa-facebook-square"></i> My friends</span></a>
           </div>
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -125,40 +100,34 @@ if(isset($_POST) && !empty($_POST)){
           <!-- /.navbar-collapse -->
       </div>
       <!-- /.container-fluid -->
-   </nav>
-
-  
+  </nav>
 
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
         <legend>友達の編集</legend>
-        <form method="post" action="edit.php" class="form-horizontal" role="form">
-          <input type="hidden" name='friend_id' value='<?php echo $rec['friend_id']; ?>'>
+        <form method="post" action="" class="form-horizontal" role="form">
             <!-- 名前 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">名前</label>
               <div class="col-sm-10">
-                <input type="text" name="name" class="form-control" placeholder="山田太郎" value='<?php echo $rec['friend_name']; ?>'>
+                <input type="text" name="name" class="form-control" placeholder="山田　太郎" value="<?php echo $friends['friend_name']; ?>">
               </div>
             </div>
             <!-- 出身 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">出身</label>
               <div class="col-sm-10">
-
                 <select class="form-control" name="area_id">
-                      <option value="0">出身地を選択</option>
-                    <?php foreach($areas as $area): ?>
-                      <?php if($area['area_id']==$rec['area_id']){ ?>
-                        <option value='<?php echo $area['area_id']; ?>' selected><?php echo $area['area_name']; ?></option>
-                      <?php }else{ ?>
-                        <option value='<?php echo $area['area_id']; ?>'><?php echo $area['area_name']; ?></option>
-                      <?php } ?>
-                    <?php endforeach ?>
-                  
+                  <option value="0">出身地を選択</option>
+                  <?php foreach ($areas as $area): ?>
+                    <?php if($area['area_id']==$friends['area_id']){?>
+                    <option value='<?php echo $area['area_id']; ?>' selected><?php echo $area['area_name']; ?></option>
+                    <?php }else{ ?>
+                    <option value='<?php echo $area['area_id']; ?>'><?php echo $area['area_name']; ?></option>
+                    <?php } ?>
+                  <?php endforeach ?>
                 </select>
-
               </div>
             </div>
             <!-- 性別 -->
@@ -172,13 +141,15 @@ if(isset($_POST) && !empty($_POST)){
 
 
                     <option value="0">性別を選択</option>
-                  <?php if($record['gender']==0){ ?>
-                    <option value='<?php echo $record['gender']; ?>' selected>男性</option>
-                    <option value='<?php echo $record['gender']; ?>' >女性</option>
-                  <?php }else if($record['gender']==1){ ?>
-                    <option value='<?php echo $record['gender']; ?>'>男性</option>
-                    <option value='<?php echo $record['gender']; ?>' selected >女性</option>
-                  <?php }  ?>
+                  <?php if($rec['gender']==0){ ?>
+                    <option value="<?php $rec['gender']; ?>" selected=>男性</option>
+                    <option value="<?php $rec['gender']; ?>" >女性</option>
+                  <?php }else if($rec['gender']==1){ ?>
+                    <option value="<?php $rec['gender']; ?>">男性</option>
+                    <option value="<?php $rec['gender']; ?>" selected>女性</option>
+                  <?php } ?>
+
+
 
 
 
@@ -186,17 +157,15 @@ if(isset($_POST) && !empty($_POST)){
                 </select>
               </div>
             </div>
-
             <!-- 年齢 -->
             <div class="form-group">
               <label class="col-sm-2 control-label">年齢</label>
               <div class="col-sm-10">
-                <input type="text" name="age" class="form-control" placeholder="例：27" value='<?php echo $record['age']; ?>'>
+                <input type="text" name="age" class="form-control" placeholder="例：27" value="<?php echo $friends['age'];?>">
               </div>
             </div>
-          
-            <input type="submit" class="btn btn-default" value="更新">
 
+          <input type="submit" class="btn btn-default" value="更新">
         </form>
       </div>
 

@@ -6,31 +6,49 @@ $password='';
 $dbh=new PDO($dsn,$user,$password);
 $dbh->query('SET NAMES utf8');
 
-// SQL作成
 
 
-// SQL実行
-$sql='SELECT * FROM `areas`';
+
+
+$sql = 'SELECT * FROM `areas`';
 $stmt=$dbh->prepare($sql);
 $stmt->execute();
 
 $areas=array();
 
+
 while(1){
   $rec=$stmt->fetch(PDO::FETCH_ASSOC);
   if($rec==false){
     break;
+
   }
   $areas[]=$rec;
 }
-// データ取得
-// データ格納用変数
+   
+// POST送信されたときだけ行いたい処理を記述
+if(isset($_POST) && !empty($_POST)){
+
+  // 登録する友達のSQL
+  $sql='INSERT INTO `friends` (`friend_name`,`area_id`,`gender`,`age`,`created`) VALUES 
+  ("'.$_POST['name'].'",'.$_POST['area_id'].','.$_POST['gender'].','.$_POST['age'].',now())';
+
+  $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+
+  header('Location: index.php');
+
+  // SQL実行
+}
+
+
 
 $dbh=null;
 
-
-
 ?>
+
+
+
 
 
 <!DOCTYPE html>
@@ -57,7 +75,7 @@ $dbh=null;
     <![endif]-->
   </head>
   <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
+   <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header page-scroll">
@@ -77,65 +95,60 @@ $dbh=null;
           <!-- /.navbar-collapse -->
       </div>
       <!-- /.container-fluid -->
-  </nav>
+   </nav>
+
+  
 
   <div class="container">
     <div class="row">
       <div class="col-md-4 content-margin-top">
-      <legend>都道府県一覧</legend>
-        <table class="table table-striped table-bordered table-hover table-condensed">
-          <thead>
-            <tr>
-              <th><div class="text-center">id</div></th>
-              <th><div class="text-center">県名</div></th>
-              <th><div class="text-center">人数</div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- id, 県名を表示 -->
-
-            <?php foreach($areas as $area): ?>
-            <tr>
-              <td><div class="text-center"><?php echo $area['area_id']; ?></div></td>
-              <td><div class="text-center"><a href="show.php?area_id=<?php echo $area['area_id']; ?>"><?php echo $area['area_name']; ?>
-              </a>
+        <legend>友達の登録</legend>
+        <form method="post" action="" class="form-horizontal" role="form">
+            <!-- 名前 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">名前</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" class="form-control" placeholder="例：山田　太郎">
               </div>
-              </td>
-              
-              <td><div class="text-center">3</div></td>
-            </tr>
-            <?php endforeach ?>
+            </div>
+            <!-- 出身 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">出身</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="area_id">
+                  <option value="1">出身地を選択</option>
+                  <?php foreach ($areas as $area): ?>
+                  <option value='<?php echo $area['area_id']; ?>'><?php echo $area['area_name']; ?></option>
+                  <?php endforeach ?>
+                </select>
+              </div>
+            </div>
+            <!-- 性別 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">性別</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="gender">
+                  <option value="0">性別を選択</option>
+                
+                  <option value="1">男性</option>
+                
+                  <option value="2">女性</option>
+                
 
-            
+                </select>
+              </div>
+            </div>
+            <!-- 年齢 -->
+            <div class="form-group">
+              <label class="col-sm-2 control-label">年齢</label>
+              <div class="col-sm-10">
+                <input type="text" name="age" class="form-control" placeholder="例：27">
+              </div>
+            </div>
 
-            
-            <!-- <tr>
-              <td><div class="text-center">2</div></td>
-              <td><div class="text-center"><a href="show.php">青森</a></div></td>
-              <td><div class="text-center">7</div></td>
-            </tr>
-            <tr>
-              <td><div class="text-center">3</div></td>
-              <td><div class="text-center"><a href="show.php">岩手</a></div></td>
-              <td><div class="text-center">2</div></td>
-            </tr>
-            <tr>
-              <td><div class="text-center">4</div></td>
-              <td><div class="text-center"><a href="show.php">宮城</a></div></td>
-              <td><div class="text-center">6</div></td>
-            </tr>
-            <tr>
-              <td><div class="text-center">5</div></td>
-              <td><div class="text-center"><a href="show.php">秋田</a></div></td>
-              <td><div class="text-center">8</div></td>
-
-            </tr> -->
-
-          </tbody>
-        </table>
+          <input type="submit" class="btn btn-default" value="登録">
+        </form>
       </div>
-    </div>
-  </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
