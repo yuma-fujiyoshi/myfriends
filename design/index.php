@@ -10,7 +10,9 @@ $dbh->query('SET NAMES utf8');
 
 
 // SQL実行
-$sql='SELECT * FROM `areas`';
+// $sql='SELECT * FROM `areas`';
+$sql='SELECT `areas`.`area_id`, `areas`.`area_name`, COUNT(`friends`.`friend_id`) AS friends_cnt FROM `areas` LEFT JOIN `friends` ON `areas`.`area_id` = `friends`.`area_id` GROUP BY `areas`.`area_id`, `areas`.`area_name` ORDER BY `areas`.`area_id`';
+
 $stmt=$dbh->prepare($sql);
 $stmt->execute();
 
@@ -102,7 +104,7 @@ $dbh=null;
               </div>
               </td>
               
-              <td><div class="text-center">3</div></td>
+              <td><div class="text-center"><?php echo $area['friends_cnt']; ?></div></td>
             </tr>
             <?php endforeach ?>
 

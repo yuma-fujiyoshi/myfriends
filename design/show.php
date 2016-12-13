@@ -60,6 +60,21 @@
 // $_GET['action']が存在する、かつ空で無いときdeleteが指定されていたら削除処理を行う。
 // 削除処理を行ったら、index.phpに画面遷移する。
 
+    if (isset($_GET['action']) && !empty($_GET['action'])) {
+      if($_GET['action']=='delete'){
+        // 制御用のSQL分を実行(物理削除)
+  
+      $sql ='DELETE FROM `friends` WHERE `friend_id` = ?';
+      // SQL実行
+      $data4[]=$_GET['friend_id'];
+      $stmt = $dbh->prepare($sql);
+      $stmt->execute($data4);
+      header('Location: index.php'); // 指定したURLに遷移
+      exit(); // これ以下の処理を停止
+    }
+      }
+
+
 
 
 

@@ -21,7 +21,6 @@ $sql='SELECT * FROM `areas`';
 $stmt=$dbh->prepare($sql);
 $stmt->execute();
 
-
 $areas=array();
 
 while(1){
@@ -43,38 +42,36 @@ $record=$stmt->fetch(PDO::FETCH_ASSOC);
 
 
 
-
-
-var_dump($_POST);
 // // // 更新処理
+
+  
+
 if(isset($_POST) && !empty($_POST)){
   $sql='UPDATE `friends` SET `friend_name`=?,`area_id`=?,`gender`=?,`age`=? WHERE `friend_id`=?';
 
+  var_dump($_POST);
 
+  $data3[]=$_POST['name'];
+  $data3[]=$_POST['area_id'];
+  $data3[]=$_POST['gender'];
+  $data3[]=$_POST['age'];
+  $data3[]=$_POST['friend_id'];
 
-
-  $data3[]=$_GET['friend_id'];
-  $data3[]=$_GET['friend_name'];
-  $data3[]=$_GET['area_id'];
-  $data3[]=$_GET['gender'];
-  $data3[]=$_GET['age'];
+  
 
   $stmt=$dbh->prepare($sql);
   $stmt->execute($data3);
 
-  // $editProfile=$stmt->fetch(PDO::ASSOC);
-
-
-
-
   header('Location: index.php');  
+
 }
 
+
+  
+
+
   // SQL実行
-
-
  $dbh=null;
-
 ?>
 
 
@@ -133,7 +130,7 @@ if(isset($_POST) && !empty($_POST)){
     <div class="row">
       <div class="col-md-4 content-margin-top">
         <legend>友達の編集</legend>
-        <form method="post" action="edit.php" class="form-horizontal" role="form">
+        <form method="POST" action="" class="form-horizontal" role="form">
           <input type="hidden" name='friend_id' value='<?php echo $rec['friend_id']; ?>'>
             <!-- 名前 -->
             <div class="form-group">
@@ -156,9 +153,7 @@ if(isset($_POST) && !empty($_POST)){
                         <option value='<?php echo $area['area_id']; ?>'><?php echo $area['area_name']; ?></option>
                       <?php } ?>
                     <?php endforeach ?>
-                  
                 </select>
-
               </div>
             </div>
             <!-- 性別 -->
@@ -171,7 +166,7 @@ if(isset($_POST) && !empty($_POST)){
 
 
 
-                    <option value="0">性別を選択</option>
+                    <option value="00">性別を選択</option>
                   <?php if($record['gender']==0){ ?>
                     <option value='<?php echo $record['gender']; ?>' selected>男性</option>
                     <option value='<?php echo $record['gender']; ?>' >女性</option>

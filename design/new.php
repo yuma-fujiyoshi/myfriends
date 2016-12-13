@@ -30,8 +30,12 @@ while(1){
 if(isset($_POST) && !empty($_POST)){
 
   // 登録する友達のSQL
+
+  var_dump($_POST);
+
   $sql='INSERT INTO `friends` (`friend_name`,`area_id`,`gender`,`age`,`created`) VALUES 
   ("'.$_POST['name'].'",'.$_POST['area_id'].','.$_POST['gender'].','.$_POST['age'].',now())';
+
 
   $stmt = $dbh->prepare($sql);
   $stmt->execute();
@@ -116,7 +120,7 @@ $dbh=null;
               <label class="col-sm-2 control-label">出身</label>
               <div class="col-sm-10">
                 <select class="form-control" name="area_id">
-                    <option value="1">出身地を選択</option>
+                    <option value="00">出身地を選択</option>
                   <?php foreach ($areas as $area): ?>
                     <option value='<?php echo $area['area_id']; ?>'><?php echo $area['area_name']; ?></option>
                   <?php endforeach ?>
@@ -128,11 +132,11 @@ $dbh=null;
               <label class="col-sm-2 control-label">性別</label>
               <div class="col-sm-10">
                 <select class="form-control" name="gender">
-                  <option value="0">性別を選択</option>
+                  <option value="00">性別を選択</option>
                 
-                  <option value="1">男性</option>
+                  <option value="0">男性</option>
                 
-                  <option value="2">女性</option>
+                  <option value="1">女性</option>
                 
 
                 </select>
